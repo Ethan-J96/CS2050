@@ -1,0 +1,9 @@
+Rectangle 2 7 2 4
+Square 3 4 1
+Circle 3 5 1
+Rectangle 4 2 20 30
+Circle 3 9 2 
+Triangle 4 6 11 9
+Square 3 9 14
+Circle 3 5 10 
+Triangle 4 8 9 15

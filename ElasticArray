@@ -1,0 +1,33 @@
+#ifndef ElasticArray.h
+#define ElasticArray.h
+
+class ElasticArray{
+public:
+   typedef int* iterator;
+   ElasticArray(int _max_size);
+   int  size() const { return _size; }
+   const int capacity();
+   int& at(int i);
+   ~ElasticArray();
+   ElasticArray() = default;
+   void front();
+   void back();
+   void push_back(int i);
+   int pop_back();
+   void shrink_to_fit();
+   iterator begin();
+   iterator end();
+   int& operator[int i];
+   ElasticArray operator+(const ElasticArray& rhs) const;
+   
+   ElasticArray(const ElasticArray& source);
+   void test_ElasticArray_copy_ctor(ElasticArray a);
+
+
+private:
+   int* _array = nullptr;
+   int  _size  = 0;
+   int  _max_size  = 0;
+};
+
+#endif
