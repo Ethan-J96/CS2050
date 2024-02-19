@@ -1,0 +1,5 @@
+Square 3 4 1
+Circle 3 5 1
+Circle 3 9 2
+Square 3 9 14
+Circle 3 5 10

@@ -1,0 +1,211 @@
+Checkpoint 1 - before fix:
+Original values: 
+
+[Foo #1 tag: "aa"], [Foo #2 tag: "hf"], [Foo #3 tag: "ok"], [Foo #4 tag: "vp"], [Foo #5 tag: "cu"], [Foo #6 tag: "jz"], [Foo #7 tag: "qe"], [Foo #8 tag: "xj"], [Foo #9 tag: "eo"], [Foo #10 tag: "lt"], [Foo #11 tag: "sy"], [Foo #12 tag: "zd"], [Foo #13 tag: "gi"], [Foo #14 tag: "nn"], [Foo #15 tag: "us"]
+
+
+
+
+Sorted values: 
+
+[Foo #167], [Foo #168 tag: "aa"], [Foo #165 tag: "cu"], [Foo #162 tag: "eo"], [Foo #159 tag: "gi"], [Foo #156 tag: "hf"], [Foo #153 tag: "jz"], [Foo #150 tag: "lt"], [Foo #144 tag: "nn"], [Foo #138 tag: "ok"], [Foo #132 tag: "qe"], [Foo #120 tag: "sy"], [Foo #108 tag: "us"], [Foo #93 tag: "vp"], [Foo #72 tag: "xj"]
+
+
+
+
+terminate called after throwing an instance of 'std::bad_alloc'
+
+  what():  std::bad_alloc
+
+Aborted
+Checkpoint 1 - after fix: 
+Original values: 
+
+[Foo #1 tag: "aa"], [Foo #2 tag: "hf"], [Foo #3 tag: "ok"], [Foo #4 tag: "vp"], [Foo #5 tag: "cu"], [Foo #6 tag: "jz"], [Foo #7 tag: "qe"], [Foo #8 tag: "xj"], [Foo #9 tag: "eo"], [Foo #10 tag: "lt"], [Foo #11 tag: "sy"], [Foo #12 tag: "zd"], [Foo #13 tag: "gi"], [Foo #14 tag: "nn"], [Foo #15 tag: "us"]
+
+
+
+
+Sorted values: 
+
+[Foo #167], [Foo #168 tag: "aa"], [Foo #165 tag: "cu"], [Foo #162 tag: "eo"], [Foo #159 tag: "gi"], [Foo #156 tag: "hf"], [Foo #153 tag: "jz"], [Foo #150 tag: "lt"], [Foo #144 tag: "nn"], [Foo #138 tag: "ok"], [Foo #132 tag: "qe"], [Foo #120 tag: "sy"], [Foo #108 tag: "us"], [Foo #93 tag: "vp"], [Foo #72 tag: "xj"]
+
+
+
+
+terminate called after throwing an instance of 'std::bad_alloc'
+
+  what():  std::bad_alloc
+
+Aborted
+
+GDB backtrace result: 
+#0  __pthread_kill_implementation (no_tid=0, signo=6, threadid=140737348200256)
+    at ./nptl/pthread_kill.c:44
+#1  __pthread_kill_internal (signo=6, threadid=140737348200256) at ./nptl/pthread_kill.c:78
+#2  __GI___pthread_kill (threadid=140737348200256, signo=signo@entry=6) at ./nptl/pthread_kill.c:89
+#3  0x00007ffff7b84476 in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
+#4  0x00007ffff7b6a7f3 in __GI_abort () at ./stdlib/abort.c:79
+#5  0x00007ffff7e2cb9e in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#6  0x00007ffff7e3820c in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+--Type <RET> for more, q to quit, c to continue without paging--c
+#7  0x00007ffff7e38277 in std::terminate() () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#8  0x00007ffff7e384d8 in __cxa_throw () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#9  0x00007ffff7e2c7ac in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007ffff7ed5fef in std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#11 0x00007ffff7ed64ad in std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#12 0x00005555555569a6 in Foo::copy_from (this=0x7fffffffdde8, f=..., who="operator=") at Foo.cpp:67
+#13 0x0000555555556bca in Foo::operator= (this=0x7fffffffdde8, f=...) at Foo.cpp:107
+#14 0x000055555555887c in reverse (begin=0x7fffffffdde8, end=0x7fffffffdaf0) at debug_inlab_1.cpp:151
+#15 0x0000555555557703 in main () at debug_inlab_1.cpp:34
+(gdb) frame 14
+#14 0x000055555555887c in reverse (begin=0x7fffffffdde8, end=0x7fffffffdaf0)
+    at debug_inlab_1.cpp:151
+151             *begin    = *end;
+(gdb) info args
+begin = 0x7fffffffdde8
+end = 0x7fffffffdaf0
+(gdb) print temp  
+$1 = {_serial = 220, _tag = ""}
+(gdb) print begin
+$2 = (Foo *) 0x7fffffffdde8
+(gdb) list
+146      * @param end   pointer to byte following last element.
+147      */
+148     void reverse( Foo* begin, Foo* end ) {
+149         while ( begin != end ) {
+150             auto temp = *begin;
+151             *begin    = *end;
+152             *end      = temp;
+153             ++begin;
+--Type <RET> for more, q to quit, c to continue without paging--info locals
+154             --end;
+155         }
+(gdb) info locals
+temp = {_serial = 220, _tag = ""}
+
+Checkpoint 2 - after fix: 
+#0  __pthread_kill_implementation (no_tid=0, signo=6, threadid=140737348200256)
+    at ./nptl/pthread_kill.c:44
+#1  __pthread_kill_internal (signo=6, threadid=140737348200256) at ./nptl/pthread_kill.c:78
+#2  __GI___pthread_kill (threadid=140737348200256, signo=signo@entry=6) at ./nptl/pthread_kill.c:89
+#3  0x00007ffff7b84476 in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
+#4  0x00007ffff7b6a7f3 in __GI_abort () at ./stdlib/abort.c:79
+#5  0x00007ffff7e2cb9e in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#6  0x00007ffff7e3820c in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+--Type <RET> for more, q to quit, c to continue without paging--c
+#7  0x00007ffff7e38277 in std::terminate() () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#8  0x00007ffff7e384d8 in __cxa_throw () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#9  0x00007ffff7e2c7ac in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#10 0x00007ffff7ed5fef in std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#11 0x00007ffff7ed64ad in std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) () from /lib/x86_64-linux-gnu/libstdc++.so.6
+#12 0x00005555555569a6 in Foo::copy_from (this=0x7fffffffdde8, f=..., who="operator=") at Foo.cpp:67
+#13 0x0000555555556bca in Foo::operator= (this=0x7fffffffdde8, f=...) at Foo.cpp:107
+#14 0x000055555555887c in reverse (begin=0x7fffffffdde8, end=0x7fffffffdaf0) at debug_inlab_1.cpp:151
+#15 0x0000555555557703 in main () at debug_inlab_1.cpp:34
+(gdb) frame 14
+#14 0x000055555555887c in reverse (begin=0x7fffffffdde8, end=0x7fffffffdaf0)
+    at debug_inlab_1.cpp:151
+151             *begin    = *end;
+
+Original values: 
+[Foo #1 tag: "aa"], [Foo #2 tag: "hf"], [Foo #3 tag: "ok"], [Foo #4 tag: "vp"], [Foo #5 tag: "cu"], [Foo #6 tag: "jz"], [Foo #7 tag: "qe"], [Foo #8 tag: "xj"], [Foo #9 tag: "eo"], [Foo #10 tag: "lt"], [Foo #11 tag: "sy"], [Foo #12 tag: "zd"], [Foo #13 tag: "gi"], [Foo #14 tag: "nn"], [Foo #15 tag: "us"]
+
+Sorted values: 
+[Foo #167], [Foo #168 tag: "aa"], [Foo #165 tag: "cu"], [Foo #162 tag: "eo"], [Foo #159 tag: "gi"], [Foo #156 tag: "hf"], [Foo #153 tag: "jz"], [Foo #150 tag: "lt"], [Foo #144 tag: "nn"], [Foo #138 tag: "ok"], [Foo #132 tag: "qe"], [Foo #120 tag: "sy"], [Foo #108 tag: "us"], [Foo #93 tag: "vp"], [Foo #72 tag: "xj"]
+
+Reversed values: 
+[Foo #170 tag: "zd"], [Foo #173 tag: "xj"], [Foo #176 tag: "vp"], [Foo #179 tag: "us"], [Foo #182 tag: "sy"], [Foo #185 tag: "qe"], [Foo #188 tag: "ok"], [Foo #191 tag: "nn"], [Foo #192 tag: "lt"], [Foo #189 tag: "jz"], [Foo #186 tag: "hf"], [Foo #183 tag: "gi"], [Foo #180 tag: "eo"], [Foo #177 tag: "cu"], [Foo #174 tag: "aa"]
+
+Re-Sorted values (after reverse): 
+[Foo #551], [Foo #552 tag: "aa"], [Foo #549 tag: "cu"], [Foo #543 tag: "eo"], [Foo #534 tag: "gi"], [Foo #522 tag: "hf"], [Foo #507 tag: "jz"], [Foo #489 tag: "lt"], [Foo #468 tag: "nn"], [Foo #444 tag: "ok"], [Foo #417 tag: "qe"], [Foo #387 tag: "sy"], [Foo #354 tag: "us"], [Foo #318 tag: "vp"], [Foo #279 tag: "xj"]
+
+Found aa
+Found eo
+Found hf
+Found lt
+Found ok
+Found sy
+Found vp
+Checkpoint 3 - before fix: 
+search (tag="xk", begin=0x7fffffffdd70, end=0x7fffffffdd48) at debug_inlab_1.cpp:176
+176             } else if ( tag < mid->tag( ) ) {
+(gdb) bt
+#0  search (tag="xk", begin=0x7fffffffdd70, end=0x7fffffffdd48) at debug_inlab_1.cpp:176
+#1  0x000055555555795f in main () at debug_inlab_1.cpp:49
+(gdb) frame 0
+#0  search (tag="xk", begin=0x7fffffffdd70, end=0x7fffffffdd48) at debug_inlab_1.cpp:176
+176             } else if ( tag < mid->tag( ) ) {
+(gdb) info local
+result = 0x0
+mid = 0x7fffffffdd70
+(gdb) info args
+tag = "xk"
+begin = 0x7fffffffdd70
+end = 0x7fffffffdd48
+(gdb) 
+
+
+Checkpoint 3 - after fix:
+Original values: 
+[Foo #1 tag: "aa"], [Foo #2 tag: "hf"], [Foo #3 tag: "ok"], [Foo #4 tag: "vp"], [Foo #5 tag: "cu"], [Foo #6 tag: "jz"], [Foo #7 tag: "qe"], [Foo #8 tag: "xj"], [Foo #9 tag: "eo"], [Foo #10 tag: "lt"], [Foo #11 tag: "sy"], [Foo #12 tag: "zd"], [Foo #13 tag: "gi"], [Foo #14 tag: "nn"], [Foo #15 tag: "us"]
+
+Sorted values: 
+[Foo #1 tag: "aa"], [Foo #68 tag: "cu"], [Foo #107 tag: "eo"], [Foo #122 tag: "gi"], [Foo #123 tag: "hf"], [Foo #120 tag: "jz"], [Foo #117 tag: "lt"], [Foo #113 tag: "nn"], [Foo #114 tag: "ok"], [Foo #105 tag: "qe"], [Foo #96 tag: "sy"], [Foo #83 tag: "us"], [Foo #84 tag: "vp"], [Foo #66 tag: "xj"], [Foo #42 tag: "zd"]
+
+Reversed values: 
+[Foo #125 tag: "zd"], [Foo #128 tag: "xj"], [Foo #131 tag: "vp"], [Foo #134 tag: "us"], [Foo #137 tag: "sy"], [Foo #140 tag: "qe"], [Foo #143 tag: "ok"], [Foo #113 tag: "nn"], [Foo #144 tag: "lt"], [Foo #141 tag: "jz"], [Foo #138 tag: "hf"], [Foo #135 tag: "gi"], [Foo #132 tag: "eo"], [Foo #129 tag: "cu"], [Foo #126 tag: "aa"]
+
+Re-Sorted values (after reverse): 
+[Foo #458 tag: "aa"], [Foo #459 tag: "cu"], [Foo #456 tag: "eo"], [Foo #450 tag: "gi"], [Foo #441 tag: "hf"], [Foo #429 tag: "jz"], [Foo #414 tag: "lt"], [Foo #396 tag: "nn"], [Foo #375 tag: "ok"], [Foo #351 tag: "qe"], [Foo #324 tag: "sy"], [Foo #294 tag: "us"], [Foo #261 tag: "vp"], [Foo #225 tag: "xj"], [Foo #186 tag: "zd"]
+
+Found aa
+Found cu
+Found eo
+Found gi
+Found hf
+Found jz
+Found lt
+Found nn
+Found ok
+Found qe
+Found sy
+Found us
+Found vp
+Found xj
+Found zd
+
+Original values: 
+[Foo #460 tag: "aa"], [Foo #461 tag: "hf"], [Foo #462 tag: "ok"], [Foo #463 tag: "vp"], [Foo #464 tag: "cu"], [Foo #465 tag: "jz"], [Foo #466 tag: "qe"], [Foo #467 tag: "xj"], [Foo #468 tag: "eo"], [Foo #469 tag: "lt"], [Foo #470 tag: "sy"], [Foo #471 tag: "zd"], [Foo #472 tag: "gi"], [Foo #473 tag: "nn"], [Foo #474 tag: "us"], [Foo #475 tag: "bx"], [Foo #476 tag: "ic"], [Foo #477 tag: "ph"], [Foo #478 tag: "wm"], [Foo #479 tag: "dr"]
+
+Sorted values: 
+[Foo #460 tag: "aa"], [Foo #721 tag: "bx"], [Foo #722 tag: "cu"], [Foo #730 tag: "dr"], [Foo #731 tag: "eo"], [Foo #728 tag: "gi"], [Foo #725 tag: "hf"], [Foo #719 tag: "ic"], [Foo #713 tag: "jz"], [Foo #707 tag: "lt"], [Foo #701 tag: "nn"], [Foo #692 tag: "ok"], [Foo #680 tag: "ph"], [Foo #668 tag: "qe"], [Foo #656 tag: "sy"], [Foo #635 tag: "us"], [Foo #614 tag: "vp"], [Foo #590 tag: "wm"], [Foo #560 tag: "xj"], [Foo #521 tag: "zd"]
+
+Reversed values: 
+[Foo #733 tag: "zd"], [Foo #736 tag: "xj"], [Foo #739 tag: "wm"], [Foo #742 tag: "vp"], [Foo #745 tag: "us"], [Foo #748 tag: "sy"], [Foo #751 tag: "qe"], [Foo #754 tag: "ph"], [Foo #757 tag: "ok"], [Foo #760 tag: "nn"], [Foo #761 tag: "lt"], [Foo #758 tag: "jz"], [Foo #755 tag: "ic"], [Foo #752 tag: "hf"], [Foo #749 tag: "gi"], [Foo #746 tag: "eo"], [Foo #743 tag: "dr"], [Foo #740 tag: "cu"], [Foo #737 tag: "bx"], [Foo #734 tag: "aa"]
+
+Re-Sorted values (after reverse): 
+[Foo #1330 tag: "aa"], [Foo #1331 tag: "bx"], [Foo #1328 tag: "cu"], [Foo #1322 tag: "dr"], [Foo #1313 tag: "eo"], [Foo #1301 tag: "gi"], [Foo #1286 tag: "hf"], [Foo #1268 tag: "ic"], [Foo #1247 tag: "jz"], [Foo #1223 tag: "lt"], [Foo #1196 tag: "nn"], [Foo #1166 tag: "ok"], [Foo #1133 tag: "ph"], [Foo #1097 tag: "qe"], [Foo #1058 tag: "sy"], [Foo #1016 tag: "us"], [Foo #971 tag: "vp"], [Foo #923 tag: "wm"], [Foo #872 tag: "xj"], [Foo #818 tag: "zd"]
+
+Found aa
+Found bx
+Found cu
+Found dr
+Found eo
+Found gi
+Found hf
+Found ic
+Found jz
+Found lt
+Found nn
+Found ok
+Found ph
+Found qe
+Found sy
+Found us
+Found vp
+Found wm
+Found xj
+Found zd
+
+[Inferior 1 (process 912171) exited normally]
