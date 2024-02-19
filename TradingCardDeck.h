@@ -1,0 +1,6 @@
+#ifndef TRADINGCARDDECK_H_
+#define TRADINGCARDDECK_H_
+
+
+
+#endif
